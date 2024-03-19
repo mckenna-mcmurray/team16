@@ -5,6 +5,9 @@ y = data(:,3);
 yaw_error = data(:,4);
 u = data(:,5);
 
+path = imread("GPS_test_2.png") %placeholder, put downloaded image name here
+
+
 %Plotting our Path
 figure;
 plot(x, y, '-o');
