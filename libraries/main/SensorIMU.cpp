@@ -69,7 +69,7 @@ void SensorIMU::read(void) {
 }
 
 String SensorIMU::printRollPitchHeading(void) {
-  String printString = "IMU:"; 
+  String printString = "IMU:";
   printString += " roll: ";
   printString += String(state.roll);
   printString += "[deg],";
@@ -78,9 +78,14 @@ String SensorIMU::printRollPitchHeading(void) {
   printString += "[deg],";
   printString += " heading: ";
   printString += String(state.heading);
-  printString += "[deg]";
+  printString += "[deg],";
+  printString += " magX: ";
+  printString += String(state.magX); // Adding the magnetometer's X value
+  printString += " [uT]"; // Assuming the units are microteslas (μT)
   return printString; 
 }
+
+
 
 String SensorIMU::printAccels(void) {
   String printString = "IMU:";
