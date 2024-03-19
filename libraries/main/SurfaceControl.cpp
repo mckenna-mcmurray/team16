@@ -54,6 +54,23 @@ void SurfaceControl::navigate(xy_state_t * state, gps_state_t * gps_state_p, int
 
     ///////////////////////////////////////////////////////////
     // INSERT P CONTROL CODE HERE
+    // Inside navigate method after setting up variables for x_des and y_des
+    // Calculate desired yaw angle
+    yaw_des = atan2(y_des - state->y, x_des - state->x);
+    // Calculate yaw error, making sure it is the shortest path around the circle
+    yaw_error = angleDiff(yaw_des - state->yaw);
+    // Calculate control effort
+    u = Kp * yaw_error;
+    // Calculate motor thrust values before correction
+    uR = avgPower + u;
+    uL = avgPower - u;
+    // Apply motor gain corrections
+    uR *= Kr;
+    uL *= Kl;
+    // Bound motor control values to be between 0 and 127
+    uR = constrain(uR, 0, 127);
+    uL = constrain(uL, 0, 127);
+
     ///////////////////////////////////////////////////////////
     
   }
