@@ -74,11 +74,26 @@ void setup() {
   int navigateDelay = 0; // how long robot will stay at surface waypoint before continuing (ms)
 
   const int num_surface_waypoints = 3; // Set to 0 if only doing depth control
-  double surface_waypoints [] = { 125, -40, 150, -40, 125, -40 };   // listed as x0,y0,x1,y1, ... etc.
+  double surface_waypoints [][2] = { // Replace these with waypoints we want
+  {lat1, lon1}, // STOP 1
+  {lat2, lon2}, // STOP 2
+  {lat3, lon3}, // STOP 3
+  }; 
+  int currentWaypoint = 0;
   surface_control.init(num_surface_waypoints, surface_waypoints, navigateDelay);
-  
-  xy_state_estimator.init(); 
 
+  xy_state_estimator.init(); 
+  //States our AUV will be in and will be controlled by position and buttons??
+  
+  enum State {
+  MOVING_TO_STOP, //traveling to waypoint
+  AT_STOP, //at a way poiny
+  FINAL_STOP //final stop
+  };
+
+  currentState = MOVING_TO_STOP; // set to base case
+  
+  stopTimeStart = millis();
   printer.printMessage("Starting main loop",10);
   loopStartTime = millis();
   printer.lastExecutionTime            = loopStartTime - LOOP_PERIOD + PRINTER_LOOP_OFFSET ;
@@ -90,7 +105,6 @@ void setup() {
   surface_control.lastExecutionTime    = loopStartTime - LOOP_PERIOD + SURFACE_CONTROL_LOOP_OFFSET;
   logger.lastExecutionTime             = loopStartTime - LOOP_PERIOD + LOGGER_LOOP_OFFSET;
 
-}
 
 
 
@@ -113,6 +127,7 @@ void loop() {
     printer.printValue(9,imu.printAccels());
     printer.printToSerial();  // To stop printing, just comment this line out
   }
+
 
   /// SURFACE CONTROL FINITE STATE MACHINE///
   if ( currentTime-surface_control.lastExecutionTime > LOOP_PERIOD ) {
@@ -178,6 +193,37 @@ void loop() {
     logger.lastExecutionTime = currentTime;
     logger.log();
   }
+
+  ///SURFACE NAVIGATION
+   switch (currentState) {
+    case MOVING_TO_STOP:
+      // Navigate towards the current waypoint
+      motorDriver.drive(255,0,255); //full speed ahead on  all motors
+      if (surfaceControl.getWayPoint == (waypoints[currentWaypoint])) { //if we're at our desired waypoint
+        currentState = AT_STOP;
+        stopTimeStart = millis();
+      }
+      break;
+
+    case AT_STOP:
+      if (millis() - stopTimeStart >= 150000) { // 150 seconds to collect data 
+        currentWaypoint++;
+        if (currentWaypoint >= sizeof(waypoints) / sizeof(waypoints[0])) { // checking to see if we're at our final stop 
+          currentState = FINAL_STOP;
+        } else {
+          currentState = MOVING_TO_STOP; //we're not done so let's keep going
+        }
+      }
+      break;
+    case FINAL_STOP:
+      motorDriver.drive(0,0,0); //stop all motors
+      while (true) {
+        delay(1000); // Infinite loop to stop further actions
+      }
+  }
+  delay(100); // Small delay for loop stability
+}
+
 }
 
 void EFA_Detected(void){
