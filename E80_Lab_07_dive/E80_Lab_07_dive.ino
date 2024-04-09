@@ -83,6 +83,10 @@ void setup() {
   xy_state_estimator.init(); 
   z_state_estimator.init();
 
+  //Added code 
+  pinMode(14, OUTPUT);
+  pinMode(17, INPUT);
+
   printer.printMessage("Starting main loop",10);
   loopStartTime = millis();
   printer.lastExecutionTime            = loopStartTime - LOOP_PERIOD + PRINTER_LOOP_OFFSET ;
@@ -132,7 +136,10 @@ void loop() {
         depth_control.diveState = false; 
         depth_control.surfaceState = true;
       }
-      motor_driver.drive(0,0,depth_control.uV);
+
+      //Added code
+      motor_driver.drive(0,0,255);
+      //motor_driver.drive(0,0,depth_control.uV);
     }
     if ( depth_control.surfaceState ) {     // SURFACE STATE //
       if ( !depth_control.atSurface ) { 
@@ -141,7 +148,16 @@ void loop() {
       else if ( depth_control.complete ) { 
         delete[] depth_control.wayPoints;   // destroy depth waypoint array from the Heap
       }
-      motor_driver.drive(0,0,depth_control.uV);
+      //Added code
+      //motor_driver.drive(0,0,depth_control.uV);
+      motor_driver.drive(0,0,-255);
+      offset = currentTime; 
+      subCurrentTime = millis()-offset;
+      while (subCurrentTime > 4000) {
+        motorDriver.drive(0,0,0);
+  } else {
+    motorDriver.drive(0,0,0);
+  }
     }
   }
   
