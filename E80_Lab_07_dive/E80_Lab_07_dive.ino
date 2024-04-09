@@ -135,7 +135,7 @@ void loop() {
       }
 
       //Added code
-      motor_driver.drive(0,0,255);
+      motor_driver.drive(255,255,255);
       //motor_driver.drive(0,0,depth_control.uV);
     }
     if ( depth_control.surfaceState ) {     // SURFACE STATE //
@@ -152,10 +152,8 @@ void loop() {
       subCurrentTime = millis()-offset;
       while (subCurrentTime > 4000) {
         motor_driver.drive(0,0,0);
-  }} else {
-    motor_driver.drive(0,0,0);
+  }}
   }
-    }
   
   
   if (currentTime-adc.lastExecutionTime > LOOP_PERIOD) {
