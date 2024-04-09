@@ -48,6 +48,8 @@ GPSLockLED led;
 // loop start recorder
 int loopStartTime;
 int currentTime;
+int offset;
+int subCurrentTime;
 volatile bool EF_States[NUM_FLAGS] = {1,1,1};
 
 ////////////////////////* Setup *////////////////////////////////
@@ -83,9 +85,6 @@ void setup() {
   xy_state_estimator.init(); 
   z_state_estimator.init();
 
-  //Added code 
-  pinMode(14, OUTPUT);
-  pinMode(17, INPUT);
 
   printer.printMessage("Starting main loop",10);
   loopStartTime = millis();
@@ -100,8 +99,6 @@ void setup() {
   logger.lastExecutionTime             = loopStartTime - LOOP_PERIOD + LOGGER_LOOP_OFFSET;
 
 }
-
-
 
 //////////////////////////////* Loop */////////////////////////
 
@@ -138,7 +135,7 @@ void loop() {
       }
 
       //Added code
-      motor_driver.drive(0,0,255);
+      motor_driver.drive(255,255,255);
       //motor_driver.drive(0,0,depth_control.uV);
     }
     if ( depth_control.surfaceState ) {     // SURFACE STATE //
@@ -154,14 +151,12 @@ void loop() {
       offset = currentTime; 
       subCurrentTime = millis()-offset;
       while (subCurrentTime > 4000) {
-        motorDriver.drive(0,0,0);
-  } else {
-    motorDriver.drive(0,0,0);
-  }
-    }
+        motor_driver.drive(0,0,0);
+  }}
   }
   
-  if ( currentTime-adc.lastExecutionTime > LOOP_PERIOD ) {
+  
+  if (currentTime-adc.lastExecutionTime > LOOP_PERIOD) {
     adc.lastExecutionTime = currentTime;
     adc.updateSample(); 
   }
