@@ -39,6 +39,7 @@
 #define MIC_PIN 23
 
 // Depth Control
-#define PRESSURE_PIN 15 // Teensy pin A00
+#define PRESSURE_PIN 15 // Teensy pin A01
+#define CRASH_PIN 16 // Teensy pin A02
 
 #endif
