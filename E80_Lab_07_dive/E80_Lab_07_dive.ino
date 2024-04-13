@@ -79,11 +79,12 @@ void setup() {
   int diveDelay = 0; // how long robot will stay at depth waypoint before continuing (ms)
 
   const int num_depth_waypoints = 2;
-  double depth_waypoints [] = { 0.5, 1 };  // listed as z0,z1,... etc.
+  double depth_waypoints [] = { 0.25, 0.5 };  // listed as z0,z1,... etc.
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
   z_state_estimator.init();
+  pinMode(CRASH_PIN, INPUT);
 
 
   printer.printMessage("Starting main loop",10);
@@ -124,9 +125,10 @@ void loop() {
   /* ROBOT CONTROL Finite State Machine */
   if ( currentTime-depth_control.lastExecutionTime > LOOP_PERIOD ) {
     depth_control.lastExecutionTime = currentTime;
-    if ( depth_control.diveState ) {      // DIVE STATE //
+    // changed to include crash state
+    if ( depth_control.diveState && crash_state == LOW) {      // DIVE STATE //
       depth_control.complete = false;
-      if ( !depth_control.atDepth ) {
+      if ( !depth_control.atDepth && crash_state == LOW) {
         depth_control.dive(&z_state_estimator.state, currentTime);
       }
       else {
@@ -135,11 +137,11 @@ void loop() {
       }
 
       //Added code
-      motor_driver.drive(255,255,255);
+      motor_driver.drive(0,0,0);
       //motor_driver.drive(0,0,depth_control.uV);
     }
-    if ( depth_control.surfaceState ) {     // SURFACE STATE //
-      if ( !depth_control.atSurface ) { 
+    if ( depth_control.surfaceState && crash_state == LOW) {     // SURFACE STATE //
+      if ( !depth_control.atSurface && crash_state == LOW) { 
         depth_control.surface(&z_state_estimator.state);
       }
       else if ( depth_control.complete ) { 
