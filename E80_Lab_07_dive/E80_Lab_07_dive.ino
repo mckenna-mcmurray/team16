@@ -84,7 +84,6 @@ void setup() {
   
   xy_state_estimator.init(); 
   z_state_estimator.init();
-  pinMode(CRASH_PIN, INPUT);
 
 
   printer.printMessage("Starting main loop",10);
@@ -125,10 +124,9 @@ void loop() {
   /* ROBOT CONTROL Finite State Machine */
   if ( currentTime-depth_control.lastExecutionTime > LOOP_PERIOD ) {
     depth_control.lastExecutionTime = currentTime;
-    // changed to include crash state
-    if ( depth_control.diveState && crash_state == LOW) {      // DIVE STATE //
+    if ( depth_control.diveState) {      // DIVE STATE //
       depth_control.complete = false;
-      if ( !depth_control.atDepth && crash_state == LOW) {
+      if ( !depth_control.atDepth) {
         depth_control.dive(&z_state_estimator.state, currentTime);
       }
       else {
@@ -140,8 +138,8 @@ void loop() {
       motor_driver.drive(0,0,0);
       //motor_driver.drive(0,0,depth_control.uV);
     }
-    if ( depth_control.surfaceState && crash_state == LOW) {     // SURFACE STATE //
-      if ( !depth_control.atSurface && crash_state == LOW) { 
+    if ( depth_control.surfaceState) {     // SURFACE STATE //
+      if ( !depth_control.atSurface) { 
         depth_control.surface(&z_state_estimator.state);
       }
       else if ( depth_control.complete ) { 
