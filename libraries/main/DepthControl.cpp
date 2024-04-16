@@ -34,7 +34,7 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
   depth = state->z;
   uV = Kp*(depth_des-depth);
   uV = min(-250, max (250,uV));
-  if(delayed) {
+  if(delayed == 1) {
     uV = 0;
   }
 
@@ -79,6 +79,8 @@ String DepthControl::printString(void) {
     printString += "[m], ";
     printString += "uV: ";
     printString += String(uV);
+    printString += "delayed: ";
+    printString += String(delayed);
   }
   return printString;
 }
