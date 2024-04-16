@@ -74,10 +74,10 @@ void setup() {
   motor_driver.init();
   led.init();
 
-  int diveDelay = 0; // how long robot will stay at depth waypoint before continuing (ms)
+  int diveDelay = 5; // how long robot will stay at depth waypoint before continuing (ms)
 
-  const int num_depth_waypoints = 2;
-  double depth_waypoints [] = { 0.5, 1 };  // listed as z0,z1,... etc.
+  const int num_depth_waypoints = 4;
+  double depth_waypoints [] = {0.55};  // listed as z0,z1,... etc.
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
@@ -122,37 +122,37 @@ void loop() {
 
   /* ROBOT CONTROL Finite State Machine */
   if ( currentTime-depth_control.lastExecutionTime > LOOP_PERIOD ) {
-    Serial.println("At 1st if statement");
+    // Serial.println("At 1st if statement");
     depth_control.lastExecutionTime = currentTime;
     if ( depth_control.diveState ) {      // DIVE STATE //
       depth_control.complete = false;
-      Serial.println("At 2nd if statement");
+      // Serial.println("At 2nd if statement");
       if ( !depth_control.atDepth ) {
         depth_control.dive(&z_state_estimator.state, currentTime);
-        Serial.println("At 3rd if statement");
+        // Serial.println("At 3rd if statement");
       }
       else {
         depth_control.diveState = false; 
         depth_control.surfaceState = true;
-        Serial.println("At 1st else statement");
+        // Serial.println("At 1st else statement");
       }
       //motor_driver.drive(0,0,255);
       motor_driver.drive(0,0,depth_control.uV);
-      Serial.println("Motor is driving");
+      // Serial.println("Motor is driving");
     }
     if ( depth_control.surfaceState ) {     // SURFACE STATE //
-      Serial.println("At 4th if statement");
+      // Serial.println("At 4th if statement");
       if ( !depth_control.atSurface ) { 
-        Serial.println("At 5th if statement");
+        // Serial.println("At 5th if statement");
         depth_control.surface(&z_state_estimator.state);
       }
       else if ( depth_control.complete ) { 
-        Serial.println("At 1st else if statement");
+        // Serial.println("At 1st else if statement");
         delete[] depth_control.wayPoints;   // destroy depth waypoint array from the Heap
       }
       //motor_driver.drive(0,0,-255);
       motor_driver.drive(0,0,depth_control.uV);
-      Serial.println("Motor is driving II");
+      // Serial.println("Motor is driving II");
     }
   }
   
