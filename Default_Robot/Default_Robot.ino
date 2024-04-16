@@ -126,6 +126,17 @@ void loop() {
     surface_control.navigate(&state_estimator.state, &gps.state, DELAY);
     motor_driver.drive(surface_control.uL,surface_control.uR,0);
   }
+  // Expiremental burst pin sampling
+// samples at around 7400Hz every 30 seconds
+// stops motors and waits 2 seconds before burst sample
+  if ( currentTime-burst_adc.lastExecutionTime > 30000 ) {
+    burst_adc.lastExecutionTime = currentTime;
+    motor_driver.drive(0,0,0);
+    delay(2000);
+    Serial.print("Sampling\n");
+    burst_adc.sample();
+    Serial.print("done\n");
+  }
 
   if ( currentTime-adc.lastExecutionTime > LOOP_PERIOD ) {
     adc.lastExecutionTime = currentTime;
