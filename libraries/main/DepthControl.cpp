@@ -33,7 +33,13 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
   depth_des = wayPoints[currentWayPoint];
   depth = state->z;
   uV = Kp*(depth_des-depth);
-  uV = min(250, max (-250,uV));
+  if (uV < 0) {
+    uV = -255;
+  } 
+  else {
+    uV = 255;
+  }
+  // uV = min(250, max (-250,uV));
   // if(delayed == 1) {
   //   uV = 0;
   // }
@@ -58,8 +64,8 @@ void DepthControl::surface(z_state_t * state) {
     smTime = 10;
   }
   else { // not at surface yet
-    atSurface = 0;
-    uV = -30; // go upward
+    atSurface = .3;
+    uV = -255; // go upward
   }
   printer.printMessage(surfaceMessage,smTime);
 }

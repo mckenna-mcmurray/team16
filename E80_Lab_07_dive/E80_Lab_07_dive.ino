@@ -74,7 +74,7 @@ void setup() {
   motor_driver.init();
   led.init();
 
-  int diveDelay = 2000; // how long robot will stay at depth waypoint before continuing (ms)
+  int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
 
   const int num_depth_waypoints = 4;
   double depth_waypoints [] = {0.1, 0.2, 0.3, 0.4};  // listed as z0,z1,... etc.

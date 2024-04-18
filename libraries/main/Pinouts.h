@@ -34,6 +34,9 @@
 #define ERROR_FLAG_B 8
 #define ERROR_FLAG_C 9
 
+//FSR
+#define FSR_PIN 14
+
 // TOF
 #define SPEAKER_PIN 20
 #define MIC_PIN 23
