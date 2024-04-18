@@ -45,7 +45,7 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
 }
 
 void DepthControl::surface(z_state_t * state) {
-  depth_des = 0;
+  depth_des = 0.5;
   depth = state->z;
 
   String surfaceMessage = "";
@@ -54,7 +54,7 @@ void DepthControl::surface(z_state_t * state) {
     atSurface = 1;
     complete = 1;
     uV = 0;
-    surfaceMessage = "Got to surface. Finished Depth Control";
+    surfaceMessage = "Reached surface. Trial Completed.";
     smTime = 10;
   }
   else { // not at surface yet
