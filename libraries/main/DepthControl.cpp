@@ -152,3 +152,4 @@ size_t DepthControl::writeDataBytes(unsigned char * buffer, size_t idx) {
   data_slot[2] = depth_des;
   return idx + 3*sizeof(float);
 }
+

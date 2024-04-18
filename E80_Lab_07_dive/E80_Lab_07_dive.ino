@@ -1,6 +1,12 @@
 /********
 E80 Lab 7 Dive Activity Code
 Authors:
+  
+  
+  
+  
+  
+  
 
     Omar Aleman (oaleman@g.hmc.edu) '21 (contributed 2019)
     Wilson Ives (wives@g.hmc.edu) '20 (contributed in 2018)
@@ -90,10 +96,10 @@ void setup() {
 
   int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
 
-<<<<<<< HEAD
-  const int num_depth_waypoints = 1;
-  double depth_waypoints [] = {0.4};  // listed as z0,z1,... etc.
-=======
+// <<<<<<< HEAD
+//   const int num_depth_waypoints = 1;
+//   double depth_waypoints [] = {0.4};  // listed as z0,z1,... etc.
+ =======
   const int num_depth_waypoints = 3;
   double depth_waypoints [] = {0.5, 2.5, max_length};  // listed as z0,z1,... etc.
 >>>>>>> 08daacd81f8453fbac1c4ff4951706739d2fd8bc
