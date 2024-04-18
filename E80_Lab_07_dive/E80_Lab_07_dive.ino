@@ -12,7 +12,8 @@ Authors:
     Wilson Ives (wives@g.hmc.edu) '20 (contributed in 2018)
     Christopher McElroy (cmcelroy@g.hmc.edu) '19 (contributed in 2017)  
     Josephine Wong (jowong@hmc.edu) '18 (contributed in 2016)
-    Apoorva Sharma (asharma@hmc.edu) '17 (contributed in 2016)                    
+    Apoorva Sharma (asharma@hmc.edu) '17 (contributed in 2016)
+    Caden Perry (caperry@hmc.edu) '26 (contributed in 2024)                    
 */
 
 #include <Arduino.h>
@@ -35,6 +36,7 @@ Authors:
 #include <DepthControl.h>
 #define UartSerial Serial1
 #include <GPSLockLED.h>
+#include <BurstADCSampler.h>
 
 /////////////////////////* Global Variables *////////////////////////
 
@@ -51,11 +53,21 @@ SensorIMU imu;
 Logger logger;
 Printer printer;
 GPSLockLED led;
+BurstADCSampler burst_adc;
 
 // loop start recorder
 int loopStartTime;
 int currentTime;
 volatile bool EF_States[NUM_FLAGS] = {1,1,1};
+
+const int outputPin = 24;
+const int lowblue = 27;
+const int highwhite = 25;
+const int max_length = 4.6952;
+bool fsr_crash = false;
+
+//blue is low - A13/pin 27
+//white is high - A11/pin 25
 
 ////////////////////////* Setup *////////////////////////////////
 
@@ -80,11 +92,17 @@ void setup() {
   gps.init(&GPS);
   motor_driver.init();
   led.init();
+  burst_adc.init();
 
   int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
 
+<<<<<<< HEAD
   const int num_depth_waypoints = 1;
   double depth_waypoints [] = {0.4};  // listed as z0,z1,... etc.
+=======
+  const int num_depth_waypoints = 3;
+  double depth_waypoints [] = {0.5, 2.5, max_length};  // listed as z0,z1,... etc.
+>>>>>>> 08daacd81f8453fbac1c4ff4951706739d2fd8bc
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
@@ -129,12 +147,15 @@ void loop() {
 
   /* ROBOT CONTROL Finite State Machine */
   if ( currentTime-depth_control.lastExecutionTime > LOOP_PERIOD ) {
+    if ((analogRead(A1) * 3.3 / 1024) < 1.5){
+      fsr_crash = true;
+    }
     // Serial.println("At 1st if statement");
     depth_control.lastExecutionTime = currentTime;
     if ( depth_control.diveState ) {      // DIVE STATE //
       depth_control.complete = false;
       // Serial.println("At 2nd if statement");
-      if ( !depth_control.atDepth ) {
+      if ( !depth_control.atDepth && !fsr_crash) {
         depth_control.dive(&z_state_estimator.state, currentTime);
         // Serial.println("At 3rd if statement");
       }
@@ -144,7 +165,23 @@ void loop() {
         // Serial.println("At 1st else statement");
       }
       //motor_driver.drive(0,0,255);
-      motor_driver.drive(0,0,depth_control.uV);
+      //motor_driver.drive(0,0,depth_control.uV);
+      if (depth_control.uV > 0){
+        digitalWrite (highwhite , HIGH);
+        digitalWrite (lowblue , LOW);      
+      }
+
+      else if (depth_control.uV < 0){
+        digitalWrite (highwhite , LOW);
+        digitalWrite (lowblue , HIGH);
+      }
+
+      else {
+        digitalWrite (highwhite , LOW);
+        digitalWrite (lowblue , LOW);
+      }
+
+      
       // Serial.println("Motor is driving");
     }
     if ( depth_control.surfaceState ) {     // SURFACE STATE //
@@ -158,14 +195,42 @@ void loop() {
         delete[] depth_control.wayPoints;   // destroy depth waypoint array from the Heap
       }
       //motor_driver.drive(0,0,-255);
-      motor_driver.drive(0,0,depth_control.uV);
-      // Serial.println("Motor is driving II");
+     // motor_driver.drive(0,0,depth_control.uV);
+      if (depth_control.uV > 0){
+        digitalWrite (highwhite , HIGH);
+        digitalWrite (lowblue , LOW);      
+      }
+
+      else if (depth_control.uV < 0){
+        digitalWrite (highwhite , LOW);
+        digitalWrite (lowblue , HIGH);
+      }
+
+      else {
+        digitalWrite (highwhite , LOW);
+        digitalWrite (lowblue , LOW);
+      }
     }
   }
   
   if ( currentTime-adc.lastExecutionTime > LOOP_PERIOD ) {
     adc.lastExecutionTime = currentTime;
     adc.updateSample(); 
+  }
+
+  // Expiremental burst pin sampling
+// samples at around 7400Hz every 30 seconds
+// stops motors and waits 2 seconds before burst sample
+  if ( currentTime-burst_adc.lastExecutionTime > 30000 ) {
+    burst_adc.lastExecutionTime = currentTime;
+    // motor_driver.drive(0,0,0);
+    delay(500);
+    Serial.print("Sampling\n");
+    analogWrite(outputPin, 128); // Set the PWM duty cycle to 50% (analogWrite values range from 0 to 255)
+    delayMicroseconds(125);
+    analogWrite(outputPin, 0);
+    burst_adc.sample();
+    Serial.print("done\n");
   }
 
   if ( currentTime-ef.lastExecutionTime > LOOP_PERIOD ) {
