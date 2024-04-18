@@ -96,13 +96,8 @@ void setup() {
 
   int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
 
-// <<<<<<< HEAD
-//   const int num_depth_waypoints = 1;
-//   double depth_waypoints [] = {0.4};  // listed as z0,z1,... etc.
- //=======
   const int num_depth_waypoints = 2;
   double depth_waypoints [] = {0.1, 0.2};  // listed as z0,z1,... etc.
-//>>>>>>> 8daacd81f8453fbac1c4ff4951706739d2fd8bc
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
