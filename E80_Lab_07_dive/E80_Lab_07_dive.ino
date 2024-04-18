@@ -100,8 +100,8 @@ void setup() {
 //   const int num_depth_waypoints = 1;
 //   double depth_waypoints [] = {0.4};  // listed as z0,z1,... etc.
  //=======
-  const int num_depth_waypoints = 3;
-  double depth_waypoints [] = {0.5, 2.5, max_length};  // listed as z0,z1,... etc.
+  const int num_depth_waypoints = 2;
+  double depth_waypoints [] = {0.1, 0.2};  // listed as z0,z1,... etc.
 //>>>>>>> 8daacd81f8453fbac1c4ff4951706739d2fd8bc
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
@@ -154,7 +154,7 @@ void loop() {
     depth_control.lastExecutionTime = currentTime;
     if ( depth_control.diveState ) {      // DIVE STATE //
       depth_control.complete = false;
-      // Serial.println("At 2nd if statement");
+       Serial.println("Diving");
       if ( !depth_control.atDepth && !fsr_crash) {
         depth_control.dive(&z_state_estimator.state, currentTime);
         // Serial.println("At 3rd if statement");
@@ -185,7 +185,7 @@ void loop() {
       // Serial.println("Motor is driving");
     }
     if ( depth_control.surfaceState ) {     // SURFACE STATE //
-      // Serial.println("At 4th if statement");
+       Serial.println("Surfacing");
       if ( !depth_control.atSurface ) { 
         // Serial.println("At 5th if statement");
         depth_control.surface(&z_state_estimator.state);
