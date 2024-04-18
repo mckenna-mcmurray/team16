@@ -1,12 +1,6 @@
 /********
 E80 Lab 7 Dive Activity Code
 Authors:
-  
-  
-  
-  
-  
-  
 
     Omar Aleman (oaleman@g.hmc.edu) '21 (contributed 2019)
     Wilson Ives (wives@g.hmc.edu) '20 (contributed in 2018)
