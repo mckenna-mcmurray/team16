@@ -147,15 +147,16 @@ void loop() {
 
   /* ROBOT CONTROL Finite State Machine */
   if ( currentTime-depth_control.lastExecutionTime > LOOP_PERIOD ) {
-    if ((analogRead(A1) * 3.3 / 1024) < 1.5){
+    if ((double(analogRead(A1)) * 3.3 / 1024) < 1.5){
       fsr_crash = true;
     }
+    //Serial.print(double(analogRead(A1)) * 3.3 / 1024);
     // Serial.println("At 1st if statement");
     depth_control.lastExecutionTime = currentTime;
     if ( depth_control.diveState ) {      // DIVE STATE //
       depth_control.complete = false;
-       Serial.println("Diving");
-      if ( !depth_control.atDepth && !fsr_crash) {
+       //Serial.println("Diving");
+      if ( !depth_control.atDepth /*&& !fsr_crash*/) {
         depth_control.dive(&z_state_estimator.state, currentTime);
         // Serial.println("At 3rd if statement");
       }
@@ -221,7 +222,7 @@ void loop() {
   // Expiremental burst pin sampling
 // samples at around 7400Hz every 30 seconds
 // stops motors and waits 2 seconds before burst sample
-  if ( currentTime-burst_adc.lastExecutionTime > 30000 ) {
+  if ( currentTime-burst_adc.lastExecutionTime > 1000 ) {
     burst_adc.lastExecutionTime = currentTime;
     // motor_driver.drive(0,0,0);
     delay(500);
