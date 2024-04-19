@@ -38,11 +38,11 @@
 #define FSR_PIN 14
 
 // TOF
-#define SPEAKER_PIN 20
-#define MIC_PIN 23
+#define SPEAKER_PIN 24
+#define MIC_PIN 16
 
 // Depth Control
 #define PRESSURE_PIN 15 // Teensy pin A01
-#define CRASH_PIN 16 // Teensy pin A02
+//#define CRASH_PIN 16 // Teensy pin A02
 
 #endif

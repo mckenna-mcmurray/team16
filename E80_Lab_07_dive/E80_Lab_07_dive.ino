@@ -65,13 +65,19 @@ const int lowblue = 27;
 const int highwhite = 25;
 const int max_length = 4.6952;
 bool fsr_crash = false;
-
+int debouncer = 0;
 //blue is low - A13/pin 27
 //white is high - A11/pin 25
 
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
+  pinMode(outputPin, OUTPUT);
+  analogReadAveraging(0);
+  analogWriteFrequency(outputPin, 40000);
+
+  pinMode(lowblue, OUTPUT);
+  pinMode(highwhite, OUTPUT);
   
   logger.include(&imu);
   logger.include(&gps);
@@ -97,7 +103,7 @@ void setup() {
   int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
 
   const int num_depth_waypoints = 2;
-  double depth_waypoints [] = {0.3, 0.3};  // listed as z0,z1,... etc.
+  double depth_waypoints [] = {0.3, 0.45, 0.2};  // listed as z0,z1,... etc.
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
@@ -140,18 +146,27 @@ void loop() {
     printer.printToSerial();  // To stop printing, just comment this line out
   }
 
+  if (currentTime - depth_control.lastExecutionTime > LOOP_PERIOD){
+      if (double(analogRead(A0)) < 200){
+        debouncer++;
+        if ( debouncer > 20){
+         fsr_crash = true;
+        }
+      } else{
+        debouncer = 0;
+      }
+  }
+
   /* ROBOT CONTROL Finite State Machine */
   if ( currentTime-depth_control.lastExecutionTime > LOOP_PERIOD ) {
-    if ((double(analogRead(A1)) * 3.3 / 1024) < 1.5){
-      fsr_crash = true;
-    }
+
     //Serial.print(double(analogRead(A1)) * 3.3 / 1024);
     // Serial.println("At 1st if statement");
     depth_control.lastExecutionTime = currentTime;
     if ( depth_control.diveState ) {      // DIVE STATE //
       depth_control.complete = false;
        //Serial.println("Diving");
-      if ( !depth_control.atDepth /*&& !fsr_crash*/) {
+      if ( !depth_control.atDepth && !fsr_crash) {
         depth_control.dive(&z_state_estimator.state, currentTime);
         // Serial.println("At 3rd if statement");
       }
@@ -217,7 +232,7 @@ void loop() {
   // Expiremental burst pin sampling
 // samples at around 7400Hz every 30 seconds
 // stops motors and waits 2 seconds before burst sample
-  if ( currentTime-burst_adc.lastExecutionTime > 1000 ) {
+  if ( currentTime-burst_adc.lastExecutionTime > 10000 ) {
     burst_adc.lastExecutionTime = currentTime;
     // motor_driver.drive(0,0,0);
     delay(500);
@@ -275,7 +290,7 @@ void loop() {
     logger.lastExecutionTime = currentTime;
     logger.log();
   }
-}
+ }
 
 void EFA_Detected(void){
   EF_States[0] = 0;
