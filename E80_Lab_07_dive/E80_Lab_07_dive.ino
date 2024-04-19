@@ -100,6 +100,9 @@ void setup() {
   led.init();
   burst_adc.init();
 
+  int startDelay = 60000;
+  int endDelay = 60000;
+
   int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
 
   const int num_depth_waypoints = 4;
