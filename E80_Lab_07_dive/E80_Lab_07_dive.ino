@@ -102,8 +102,8 @@ void setup() {
 
   int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
 
-  const int num_depth_waypoints = 2;
-  double depth_waypoints [] = {0.3, 0.45, 0.2};  // listed as z0,z1,... etc.
+  const int num_depth_waypoints = 4;
+  double depth_waypoints [] = {0.2, 0.4, 0.7, max_length};  // listed as z0,z1,... etc.
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
@@ -232,7 +232,7 @@ void loop() {
   // Expiremental burst pin sampling
 // samples at around 7400Hz every 30 seconds
 // stops motors and waits 2 seconds before burst sample
-  if ( currentTime-burst_adc.lastExecutionTime > 10000 ) {
+  if ( currentTime-burst_adc.lastExecutionTime > 30000 ) {
     burst_adc.lastExecutionTime = currentTime;
     // motor_driver.drive(0,0,0);
     delay(500);
