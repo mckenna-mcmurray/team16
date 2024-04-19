@@ -51,7 +51,7 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
 }
 
 void DepthControl::surface(z_state_t * state) {
-  depth_des = 0.5;
+  depth_des = 0.5; //this is the defined surface depth
   depth = state->z;
 
   String surfaceMessage = "";
@@ -64,7 +64,7 @@ void DepthControl::surface(z_state_t * state) {
     smTime = 10;
   }
   else { // not at surface yet
-    atSurface = .3;
+    atSurface = 0;
     uV = -255; // go upward
   }
   printer.printMessage(surfaceMessage,smTime);
