@@ -1,13 +1,6 @@
 /********
 E80 Lab 7 Dive Activity Code
 Authors:
-  
-  
-  
-  
-  
-  
-
     Omar Aleman (oaleman@g.hmc.edu) '21 (contributed 2019)
     Wilson Ives (wives@g.hmc.edu) '20 (contributed in 2018)
     Christopher McElroy (cmcelroy@g.hmc.edu) '19 (contributed in 2017)  
@@ -72,6 +65,7 @@ int debouncer = 0;
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
+  delay(60000);
   pinMode(outputPin, OUTPUT);
   analogReadAveraging(0);
   analogWriteFrequency(outputPin, 40000);
@@ -100,13 +94,13 @@ void setup() {
   led.init();
   burst_adc.init();
 
-  int startDelay = 60000;
-  int endDelay = 60000;
+  // int startDelay = 60000;
+  // int endDelay = 60000;
 
   int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
 
   const int num_depth_waypoints = 4;
-  double depth_waypoints [] = {0.2, 0.4, 0.7, max_length};  // listed as z0,z1,... etc.
+  double depth_waypoints [] = {0.25, 0.5, 0.75, max_length};  // listed as z0,z1,... etc.
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
