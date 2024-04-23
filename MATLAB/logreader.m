@@ -4,7 +4,7 @@
 clear;
 %clf;
 
-filenum = '364'; % file number for the data you want to read
+filenum = '399'; % file number for the data you want to read
 infofile = strcat('INF', filenum, '.TXT');
 datafile = strcat('LOG', filenum, '.BIN');
 
@@ -46,16 +46,19 @@ end
 fclose(fid);
 
 %% Process your data here
+
+timevec = (1:length(A00)).*0.1;
 subplot(2,1,1);
-plot(depth)
+plot(timevec,depth)
 title('Subplot 1: depth (m)')
+xlabel('Time (s)')
+ylabel('Depth (m)')
 
 subplot(2,1,2);
-% newA00 = zeros(1,length(A00));
-% for i= 1:length(A00)
-%     newA00(i) = (A00(i)*3.3)/1023;
-% end
-plot(A00)
+newA00 = (double(A00).*3.3)./1023;
+plot(timevec,newA00)
 title('Subplot 2: FSR Voltage (V)')
+xlabel('Time (s)')
+ylabel('Voltage (v)')
 
 

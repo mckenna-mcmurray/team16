@@ -4,7 +4,7 @@
 clear;
 %clf;
 
-filenum = '400'; % file number for the data you want to read
+filenum = '364'; % file number for the data you want to read
 infofile = strcat('INF', filenum, '.TXT');
 datafile = strcat('LOG', filenum, '.BIN');
 
@@ -46,12 +46,15 @@ end
 fclose(fid);
 
 %% Process your data here
+
+TeensyUnit = 
+
 subplot(2,1,1);
 plot(depth)
 title('Subplot 1: depth (m)')
 
 subplot(2,1,2);
-newA00 = 
+
 plot(A00)
 title('Subplot 2: FSR Voltage (V)')
 
