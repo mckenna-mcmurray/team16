@@ -34,7 +34,7 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
   depth = state->z;
   uV = Kp*(depth_des-depth);
   if (uV < 0) {
-    uV = -255;
+    uV = 255;
   } 
   else {
     uV = 255;

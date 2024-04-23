@@ -56,7 +56,7 @@ volatile bool EF_States[NUM_FLAGS] = {1,1,1};
 const int outputPin = 24;
 const int lowblue = 27;
 const int highwhite = 25;
-const int max_length = 4.6952;
+const int max_length = 12;
 bool fsr_crash = false;
 int debouncer = 0;
 //blue is low - A13/pin 27
@@ -65,7 +65,7 @@ int debouncer = 0;
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
-  delay(60000);
+  //delay(60000);
   pinMode(outputPin, OUTPUT);
   analogReadAveraging(0);
   analogWriteFrequency(outputPin, 40000);
@@ -100,7 +100,7 @@ void setup() {
   int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
 
   const int num_depth_waypoints = 4;
-  double depth_waypoints [] = {0.25, 0.5, 0.75, max_length};  // listed as z0,z1,... etc.
+  double depth_waypoints [] = {0.5,1, 1.5, max_length};  // listed as z0,z1,... etc.
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
@@ -144,7 +144,7 @@ void loop() {
   }
 
   if (currentTime - depth_control.lastExecutionTime > LOOP_PERIOD){
-      if (double(analogRead(A0)) < 200){
+      if (double(analogRead(A0)) < 180){
         debouncer++;
         if ( debouncer > 20){
          fsr_crash = true;
